@@ -1,0 +1,73 @@
+# 初次开屏测试步骤配置
+test_app_lifecycle:
+  steps:
+    - name: "关闭应用"
+      operation: "close_app"
+      params:
+        package_name: "${app.package_name}"
+
+    - name: "启动应用"
+      operation: "launch_app"
+      params:
+        package_name: "${app.package_name}"
+      assert:
+        - type: "result"
+          expected: true
+          message: "应用启动失败"
+
+    - name: "处理权限弹窗"
+      operation: "check_and_handle_popup"
+      params:
+        locator_name: '//android.widget.LinearLayout[@resource-id="com.android.permissioncontroller:id/grant_dialog"]'
+        button_locator_name: '//android.widget.Button[(@resource-id="com.android.permissioncontroller:id/permission_allow_button" or @resource-id="com.android.permissioncontroller:id/permission_allow_foreground_only_button") or contains(@text, "允许") or contains(@text, "Allow") or contains(@text, "ALLOW")]'
+        timeout: 5
+
+    - name: "点击START按钮"
+      operation: "click_element"
+      params:
+        locator_name: '//android.widget.Button[@resource-id="com.phone.helper.pro.cleaner:id/btn_start" or contains(@text, "START")]'
+        timeout: 10
+      assert:
+        - type: "result"
+          expected: true
+          message: "点击START按钮失败"
+    
+
+    - name: "检测loading界面"
+      operation: "wait_for_element_by_xpath"
+      params:
+        locator_name: '//android.widget.ProgressBar[@resource-id="com.phone.helper.pro.cleaner:id/pb_loading"]'
+        timeout: 10
+      assert:
+        - type: "result"
+          expected: true
+          message: "未检测到loading界面"
+
+    - name: "处理权限弹窗"
+      operation: "check_and_handle_popup"
+      params:
+        locator_name: '//android.view.ViewGroup'
+        button_locator_name: '//android.widget.Button[@resource-id="com.phone.helper.pro.cleaner:id/btn_do"]'
+        timeout: 5
+    
+
+
+
+    - name: "等待应用启动完成"
+      operation: "wait_for_activity"
+      params:
+        activity_name: ".StartSplashActivity"
+        timeout: 10
+      assert:
+        - type: "result"
+          expected: true
+          message: "等待应用启动超时"
+
+    - name: "关闭应用"
+      operation: "close_app"
+      params:
+        package_name: "${app.package_name}"
+      assert:
+        - type: "result"
+          expected: true
+          message: "关闭应用失败"

@@ -1,0 +1,117 @@
+# 应用配置
+app:
+  package_name: "com.phone.helper.pro.cleaner"
+
+# UI元素定位配置
+locators:
+
+  system_permission_window:
+    xpath: '//android.widget.LinearLayout[@resource-id="com.android.permissioncontroller:id/grant_dialog"]'
+
+  system_permission_button:
+    xpath: '//android.widget.Button[(@resource-id="com.android.permissioncontroller:id/permission_allow_button" or @resource-id="com.android.permissioncontroller:id/permission_allow_foreground_only_button") or contains(@text, "允许") or contains(@text, "Allow") or contains(@text, "ALLOW")]'
+
+
+  start_button:
+    xpath: '//android.widget.Button[@resource-id="com.phone.helper.pro.cleaner:id/btn_start" or contains(@text, "START")]'
+
+  
+  loading_progress:
+    xpath: '//android.widget.ProgressBar[@resource-id="com.phone.helper.pro.cleaner:id/pb_loading"]'
+
+  
+  main_page:
+    xpath: '//android.widget.FrameLayout[@resource-id="android:id/content"]'
+
+  
+  junk_clean_permission:
+    xpath: '//android.widget.Button[@resource-id="com.phone.helper.pro.cleaner:id/btn_do" or contains(@text, "Allow") or contains(@text, "允许")]'
+
+# 等待时间配置（单位：秒）
+wait_times:
+  process_buffer: 1
+  permission_grant: 1
+  start_button_response: 1
+  loading_check: 2
+  loading_poll: 0.5
+  observation: 2
+
+# 其他配置
+max_loading_wait_time: 30  # 加载页面最大等待时间（秒）
+
+# 数据有误，没有正确链接到关键字和元素位置。并且软件开启关闭可能并不关页面元素的事情
+# 应用启动流程配置
+app_launch_flow:
+  # 1. 关闭应用
+  terminate_app:
+    order: 1
+    action: "terminate_app"
+    wait_after: "process_buffer"
+    description: "确保应用完全关闭"
+
+  # 2. 启动应用
+  activate_app:
+    order: 2
+    action: "activate_app"
+    description: "启动应用"
+
+  # 3. 系统权限检查和处理
+  check_system_permission:
+    order: 3
+    action: "check_and_click"
+    element: "system_permission"
+    timeout: 5
+    wait_after: "permission_grant"
+    description: "检查并处理系统权限请求"
+
+  # 4. 启动页面处理
+  handle_start_page:
+    order: 4
+    action: "check_and_click"
+    element: "start_button"
+    timeout: 5
+    wait_after: "start_button_response"
+    description: "检查并点击START按钮"
+
+  # 5. 等待加载进度条
+  wait_loading:
+    order: 5
+    action: "wait_loading"
+    element: "loading_progress"
+    timeout: 10
+    wait_before: "loading_check"
+    poll_interval: "loading_poll"
+    max_wait: "max_loading_wait_time"
+    description: "等待开屏页面加载完成"
+
+  # 6. 检查主页面加载
+  check_main_page:
+    order: 6
+    action: "wait_visible"
+    element: "main_page"
+    timeout: 20
+    description: "等待主页面显示"
+
+  # 7. Junk Clean权限处理
+  handle_junk_clean_permission:
+    order: 7
+    action: "check_and_click"
+    element: "junk_clean_permission"
+    timeout: 5
+    wait_after: "permission_grant"
+    description: "检查并处理Junk Clean权限请求"
+
+  # 8. 观察等待
+  final_observation:
+    order: 8
+    action: "wait"
+    timeout: "observation"
+    description: "等待观察时间"
+
+# 应用关闭流程配置
+app_close_flow:
+  # 1. 关闭应用
+  terminate_app:
+    order: 1
+    action: "terminate_app"
+    description: "关闭应用"

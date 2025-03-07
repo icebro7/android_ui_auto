@@ -1,0 +1,10 @@
+Appium-Python-Client>=3.1.0
+selenium>=4.15.2
+unitest2>=1.1.0
+python-dateutil>=2.8.2
+pytest>=8.0.0
+pytest-html>=4.1.1
+pyaml>=6.0.1
+appium-webdriver>=3.0.0
+requests>=2.31.0
+allure-pytest>=2.13.2
